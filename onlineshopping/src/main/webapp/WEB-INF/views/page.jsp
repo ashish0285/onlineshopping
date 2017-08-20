@@ -16,8 +16,10 @@
 <!-- navbar comes here -->
 <%@include file="./shared/navbar.jsp" %>
 
+<c:if test="${userClickHome == true}">
 <!-- PAGE CONTENT comes here -->
-<%@include file="./pagecontent.jsp" %>
+<%@include file="./home.jsp" %>
+</c:if>
 
 <!-- footer comes here -->
 <%@include file="./shared/footer.jsp" %>
