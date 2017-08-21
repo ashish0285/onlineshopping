@@ -44,6 +44,8 @@
 
 		<!-- Bootstrap Core JavaScript -->
 		<script src="${js}/bootstrap.min.js"></script>
+		
+		<script src="${js}/jquery.dataTables.js"></script>
 
 		<!-- self coded JavaScript -->
 		<script src="${js}/myapp.js"></script>

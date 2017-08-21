@@ -28,6 +28,19 @@
 					</div>
 				</c:if>
 			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<table id="productListTable"
+						class="table table-striped table-bordered">
+						<thead>
+							<tr>
+								<th>Id</th>
+								<th>Name</th>
+							</tr>
+						</thead>
+					</table>
+				</div>
+			</div>
 
 		</div>
 
