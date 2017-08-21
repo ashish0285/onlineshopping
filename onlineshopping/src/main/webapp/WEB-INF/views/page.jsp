@@ -26,7 +26,7 @@
 				<!-- PAGE CONTENT comes here -->
 				<%@include file="./about.jsp"%>
 			</c:if>
-			<c:if test="${userClickViewProducts == true}">
+			<c:if test="${(userClickAllProducts == true) or (userClickCategoryProducts == true)}">
 				<!-- PAGE CONTENT comes here -->
 				<%@include file="./listproducts.jsp"%>
 			</c:if>
