@@ -1,24 +1,39 @@
 package com.ashish.onlineshopping.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ashish.onlineshopping.exception.ProductNotFoundException;
 import com.ashish.shoppingbackend.dao.CategoryDAO;
+import com.ashish.shoppingbackend.dao.ProductDAO;
 import com.ashish.shoppingbackend.dto.Category;
+import com.ashish.shoppingbackend.dto.Product;
 
 @Controller
 public class PageController {
 
+	//setting up SLF4J logger
+	private static final Logger logger = LoggerFactory.getLogger(PageController.class);
+	
 	@Autowired
 	CategoryDAO categoryDAO;
+	
+	@Autowired
+	ProductDAO productDAO;
 
 	@RequestMapping(value = { "/", "home", "index" })
 	public ModelAndView home() {
 		ModelAndView mv = new ModelAndView("page");
 		mv.addObject("title", "Home");
+		
+		logger.info("Inside Page Controller home meathod - INFO");
+		logger.debug("Inside Page Controller home meathod - DEBUG");
+		
 		// passing list of categories
 		mv.addObject("categories", categoryDAO.list());
 		mv.addObject("userClickHome", true);
@@ -69,5 +84,30 @@ public class PageController {
 		mv.addObject("userClickAllProducts", true);
 		return mv;
 	}
+	
+	/*
+	 * Viewing a Single product
+	 * */
+	@RequestMapping(value = "/show/{id}/product")
+	public ModelAndView showSingleProduct(@PathVariable int id) throws ProductNotFoundException{
+		ModelAndView mv = new ModelAndView("page");
+		
+		Product product=null;
+		
+		product = productDAO.get(id);
+		
+		if(product==null) throw new ProductNotFoundException();
+		//update the product view count
+		product.setViews(product.getViews()+1);
+		productDAO.update(product);
+		//-------------
+		
+		
+		mv.addObject("title", product.getName());
+		mv.addObject(product);
+		mv.addObject("userClickShowProduct", true);
+		return mv;
+	}
+	
 	
 }

@@ -15,6 +15,8 @@
 <!-- Bootstrap Core CSS -->
 <link href="${css}/bootstrap-readable-theme.css" rel="stylesheet">
 
+<!-- jQuery dataTabale Bootstrap CSS -->
+<link href="${css}/dataTables.bootstrap.css" rel="stylesheet">
 
 <!-- Custom CSS -->
 <link href="${css}/shop-homepage.css" rel="stylesheet">
@@ -27,6 +29,7 @@
     <![endif]-->
 <script>
 	window.menu = '${title}';
+	window.contextRoot ='${contextRoot}';
 </script>
 
 
