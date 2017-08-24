@@ -38,6 +38,10 @@
 				<!-- PAGE CONTENT comes here -->
 				<%@include file="./singleproduct.jsp"%>
 			</c:if>
+			<c:if test="${userClickManageProducts == true}">
+				<!-- Manage Products comes here -->
+				<%@include file="./manageproducts.jsp"%>
+			</c:if>
 		</div>
 		<!-- footer comes here -->
 		<%@include file="./shared/footer.jsp"%>
