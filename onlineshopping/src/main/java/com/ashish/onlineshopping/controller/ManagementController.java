@@ -12,9 +12,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ashish.onlineshopping.util.FileUploadUtility;
@@ -44,6 +46,8 @@ public class ManagementController {
 		if(operation!=null){
 			if (operation.equals("product")){
 				mv.addObject("message", "Product Submitted Successfully");
+			} else if (operation.equals("category")){
+				mv.addObject("message", "Category Submitted Successfully");
 			}
 		}
 		Product nProduct = new Product();
@@ -56,12 +60,35 @@ public class ManagementController {
 
 		return mv;
 	}
+	
+	@RequestMapping(value = "/{id}/product", method = RequestMethod.GET)
+	ModelAndView showEditProduct(@PathVariable int id) {
+		ModelAndView mv = new ModelAndView("page");
+		mv.addObject("userClickManageProducts", true);
+		mv.addObject("title", "Manage Products");
+		
+		Product nProduct = productDAO.get(id);
+		// set values
+		
+		mv.addObject("product", nProduct);
+
+		return mv;
+	}
 
 	//handling product submission
 	@RequestMapping(value = "/products", method = RequestMethod.POST)
 	public String handleProductSubmission(@Valid @ModelAttribute("product") Product mProduct, BindingResult result, Model model, HttpServletRequest request) {
 		
-		new ProductValidator().validate(mProduct, result);
+		if(mProduct.getId()==0){
+		//validate image if its a new product
+			new ProductValidator().validate(mProduct, result);
+		}else{
+			if(!mProduct.getFile().getOriginalFilename().equals(""))
+			{
+				// user has selected some file
+				new ProductValidator().validate(mProduct, result);
+			}
+		}
 		
 		if(result.hasErrors()){
 			model.addAttribute("userClickManageProducts", true);
@@ -71,7 +98,12 @@ public class ManagementController {
 			return "page";
 		}
 		logger.info(mProduct.toString());
+		
+		if(mProduct.getId()==0){
 		productDAO.add(mProduct);
+		}else{
+			productDAO.update(mProduct);
+		}
 		
 		if(!mProduct.getFile().getOriginalFilename().equals("")){
 			FileUploadUtility.uploadFile(request,mProduct.getFile(),mProduct.getCode());
@@ -80,10 +112,41 @@ public class ManagementController {
 		return "redirect:/manage/products?operation=product";
 	}
 	
+	/*
+	 * Manage Product Activation
+	 * */
+	@RequestMapping(value = "/product/{id}/activation", method = RequestMethod.POST)
+	@ResponseBody
+	public String manageProductActivation(@PathVariable int id) {
+		Product product = productDAO.get(id);
+		 Boolean isActive = product.isActive();
+		 product.setActive(!product.isActive());
+		 productDAO.update(product);
+		return isActive? "Succesfully Deactivated the Product Id: "+product.getId() :"Succesfully Activated the Product Id: "+product.getId();
+	}
+	
+	/*
+	 * handle category submission
+	 * */
+	@RequestMapping(value = "/category", method = RequestMethod.POST)
+	public String manageCategorySubmission(@ModelAttribute Category category) {
+		
+		categoryDAO.add(category);
+		return "redirect:/manage/products?operation=category";
+	}
+	
+	
 	@ModelAttribute("categories")
 	public List<Category> getCategories() {
 
 		return categoryDAO.list();
 	}
+	@ModelAttribute("category")
+	public Category getCategory() {
+
+		return new Category();
+	}
+	
+	
 
 }

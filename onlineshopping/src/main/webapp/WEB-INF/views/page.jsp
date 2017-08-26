@@ -26,7 +26,8 @@
 				<!-- PAGE CONTENT comes here -->
 				<%@include file="./about.jsp"%>
 			</c:if>
-			<c:if test="${(userClickAllProducts == true) or (userClickCategoryProducts == true)}">
+			<c:if
+				test="${(userClickAllProducts == true) or (userClickCategoryProducts == true)}">
 				<!-- PAGE CONTENT comes here -->
 				<%@include file="./listproducts.jsp"%>
 			</c:if>
@@ -50,12 +51,20 @@
 		<!-- jQuery -->
 		<script src="${js}/jquery.js"></script>
 
+		<!-- jquery vlidator -->
+		<script src="${js}/jquery.validate.js"></script>
+		
 		<!-- Bootstrap Core JavaScript -->
 		<script src="${js}/bootstrap.min.js"></script>
-		
+
 		<script src="${js}/jquery.dataTables.js"></script>
 		<!-- DataTable bootstarp -->
 		<script src="${js}/dataTables.bootstrap.js"></script>
+
+		<!-- bootbox bootstarp -->
+		<script src="${js}/bootbox.min.js"></script>
+
+
 
 		<!-- self coded JavaScript -->
 		<script src="${js}/myapp.js"></script>
