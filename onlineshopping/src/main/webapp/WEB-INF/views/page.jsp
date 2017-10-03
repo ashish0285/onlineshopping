@@ -2,6 +2,7 @@
 	pageEncoding="ISO-8859-1"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <spring:url var="css" value="/resources/css" />
 <spring:url var="fonts" value="/resources/fonts" />
 <spring:url var="images" value="/resources/images" />
@@ -12,6 +13,10 @@
 <head>
 <!-- header comes here -->
 <%@include file="./shared/header.jsp"%>
+<!-- adding CSRF token for using our AJAX code with spring Security-->
+<meta name="_csrf" content="${_csrf.token}">
+<meta name="_csrf_header" content="${_csrf.headerName}">
+
 </head>
 <body>
 	<div class="wrapper">
@@ -43,6 +48,10 @@
 				<!-- Manage Products comes here -->
 				<%@include file="./manageproducts.jsp"%>
 			</c:if>
+			<c:if test="${userClickShowCart == true}">
+				<%@include file="cart.jsp"%>
+			</c:if>
+			
 		</div>
 		<!-- footer comes here -->
 		<%@include file="./shared/footer.jsp"%>

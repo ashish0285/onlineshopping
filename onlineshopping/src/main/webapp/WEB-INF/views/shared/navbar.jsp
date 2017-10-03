@@ -21,16 +21,41 @@
 				<li id="contact"><a href="${contextRoot}/contact">Contact</a></li>
 				<li id="listProducts"><a
 					href="${contextRoot}/show/all/products">View Products</a></li>
-				<li id="manageProducts"><a
-					href="${contextRoot}/manage/products">Manage Products</a></li>
+				<security:authorize access="hasAuthority('ADMIN')">
+					<li id="manageProducts"><a
+						href="${contextRoot}/manage/products">Manage Products</a></li>
+				</security:authorize>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
-				<li id="register"><a href="${contextRoot}/register">Sign Up</a></li>
-				<li id="login"><a href="${contextRoot}/login">Login</a></li>
+				<security:authorize access="isAnonymous()">
+					<li id="register"><a href="${contextRoot}/register">Sign
+							Up</a></li>
+					<li id="login"><a href="${contextRoot}/login">Login</a></li>
+				</security:authorize>
+				<security:authorize access="isAuthenticated()">
+					<li class="dropdown"><a id="dropdownMenu1"
+						href="javascript:void(0)" class="btn btn-default dropdown-toggle"
+						data-toggle="dropdown"><b>${userModel.fullName} </b><span
+							class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<security:authorize access="hasAuthority('USER')">
+								<li><a href="${contextRoot}/cart/show">MyCart : <span
+										class="badge">${userModel.cart.cartLines}</span> - &#8377;
+										${userModel.cart.grandTotal}
+								</a></li>
+								<li class="divider" role="seperator" />
+							</security:authorize>
+							<li><a href="${contextRoot}/shopping-logout">Logout</a></li>
+						</ul></li>
+				</security:authorize>
 			</ul>
+
 		</div>
 		<!-- /.navbar-collapse -->
 	</div>
 	<!-- /.container -->
 </nav>
+<script>
+	window.userRole = '${userModel.role}'
+</script>
 

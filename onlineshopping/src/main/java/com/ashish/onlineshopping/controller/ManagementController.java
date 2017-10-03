@@ -122,6 +122,7 @@ public class ManagementController {
 		 Boolean isActive = product.isActive();
 		 product.setActive(!product.isActive());
 		 productDAO.update(product);
+		 logger.info(product.toString());
 		return isActive? "Succesfully Deactivated the Product Id: "+product.getId() :"Succesfully Activated the Product Id: "+product.getId();
 	}
 	

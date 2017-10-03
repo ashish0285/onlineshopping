@@ -36,6 +36,7 @@ public class FileUploadUtility {
 						
 
 				try {
+					
 					// server upload
 					file.transferTo(new File(REAL_PATH + code + ".jpg"));
 					// project directory upload

@@ -1,4 +1,19 @@
 $(function() {
+	
+	//to tackle CSRF token
+	var token = $('meta[name="_csrf"]').attr('content');
+	var header = $('meta[name="_csrf_header"]').attr('content');
+	
+	if(token.length > 0 && header.length > 0){
+		/*$.ajaxSend(function(e, xhr, option){
+			xhr.setRequestHeader(header, token);
+		});*/
+		$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+			  jqXHR.setRequestHeader(header, token);
+			});
+	}
+	
+	
 	switch (menu) {
 
 	case 'About Us':
@@ -13,6 +28,9 @@ $(function() {
 	case 'Manage Products':
 		$('#manageProducts').addClass('active');
 		break;
+	case 'Shopping Cart':
+		$('#userModel').addClass('active');
+		break;	
 	default:
 		if (menu == "Home")
 			break;
@@ -22,6 +40,7 @@ $(function() {
 
 	}
 
+	
 	// Code for Jquery Data Table
 	// create a dummy dataSet
 
@@ -29,14 +48,14 @@ $(function() {
 	 * var products =[ ['1','ABC'], ['2','BCD'], ['3','CDE'], ['4','DEF'],
 	 * ['5','EFG'], ['6','FGH'], ['7','GHI'], ['8','HIJ'], ['9','JKL'] ];
 	 */
-	var $table = $('#productListTable')
+	var $table = $('#productListTable');
 	if ($table.length) {
 		var jsonUrl = '';
 		if (categoryId == '') {
-			jsonUrl = contextRoot + '/json/data/all/products'
+			jsonUrl = contextRoot + '/json/data/all/products';
 		} else {
 			jsonUrl = contextRoot + '/json/data/category/' + categoryId
-					+ '/products'
+					+ '/products';
 		}
 
 		$table
@@ -73,20 +92,20 @@ $(function() {
 							{
 								data : 'unitPrice',
 								mRender : function(data, type, row) {
-									return '&#8377; ' + data
+									return '&#8377; ' + data;
 									// &#8377; is for Rupees Symbol
 								}
 							},
 							{
 								data : 'quantity',
 								mRender : function(data, type, row) {
-									str1 = ''
+									str1 = '';
 									if (data < 1) {
-										str1 = '<span style="color:red">Out of Stock!!</span>'
+										str1 = '<span style="color:red">Out of Stock!!</span>';
 									} else {
-										str1 = data
+										str1 = data;
 									}
-									return str1
+									return str1;
 								}
 							},
 							{
@@ -98,19 +117,21 @@ $(function() {
 											+ contextRoot
 											+ '/show/'
 											+ data
-											+ '/product" class="btn btn-primary">View</a> | '
-
-									if (row.quantity < 1) {
-										str += '<a href="javascript:void(0)" class="btn btn-success disabled"><strike>Add to Cart</strike></a>'
+											+ '/product" class="btn btn-primary">View</a> | ';
+									if(window.userRole=='ADMIN'){
+										str+='<a href="'+ window.contextRoot +'/manage/'+data+'/product" class="btn btn-warning"><span class="glyphicon glyphicon-pencil"/></a>';
+									}
+									else {if (row.quantity < 1) {
+										str += '<a href="javascript:void(0)" class="btn btn-success disabled"><strike>Add to Cart</strike></a>';
 									} else {
 										str += '<a href="'
 												+ contextRoot
 												+ '/cart/add/'
 												+ data
-												+ '/product" class="btn btn-success">Add to Cart</a>'
-									}
+												+ '/product" class="btn btn-success">Add to Cart</a>';
+									}}
 
-									return str
+									return str;
 								}
 							}
 
@@ -120,11 +141,11 @@ $(function() {
 	}
 	// dismissing the alert after 3 seconds
 
-	var $alert = $('.alert')
+	var $alert = $('.alert');
 
 	if ($alert.length) {
 		setTimeout(function() {
-			$alert.fadeOut('slow')
+			$alert.fadeOut('slow');
 		}, 3000)
 	}
 
@@ -132,7 +153,7 @@ $(function() {
 
 	
 
-	var $adminTable = $('#adminProductsTable')
+	var $adminTable = $('#adminProductsTable');
 
 	if ($adminTable.length) {
 
@@ -162,7 +183,7 @@ $(function() {
 											+ '/resources/images/'
 											+ data
 											+ '.jpg" class="adminDataTableImg" alt="'
-											+ row.name + '"/>'
+											+ row.name + '"/>';
 								}
 							},
 							{
@@ -174,7 +195,7 @@ $(function() {
 							{
 								data : 'unitPrice',
 								mRender : function(data, type, row) {
-									return '&#8377; ' + data + ' /-'
+									return '&#8377; ' + data + ' /-';
 									// &#8377; is for Rupees Symbol
 								}
 
@@ -184,11 +205,11 @@ $(function() {
 								mRender : function(data, type, row) {
 									str1 = ''
 									if (data < 1) {
-										str1 = '<span style="color:red">Out of Stock!!</span>'
+										str1 = '<span style="color:red">Out of Stock!!</span>';
 									} else {
-										str1 = data
+										str1 = data;
 									}
-									return str1
+									return str1;
 								}
 
 							},
@@ -209,38 +230,35 @@ $(function() {
 							}, {
 								data : 'id',
 								mRender : function(data, type, row) {
-									return '<a href="'+ window.contextRoot +'/manage/'+data+'/product" class="btn btn-warning"><span class="glyphicon glyphicon-pencil"/></a>'
+									return '<a href="'+ window.contextRoot +'/manage/'+data+'/product" class="btn btn-warning"><span class="glyphicon glyphicon-pencil"/></a>';
 								}
 							} ],
 							drawCallback: function(){
-								
-									$('.switch input[type="checkbox"]').on('change', function() {
+								$('.switch input[type="checkbox"]').on('change', function() {
 											
 										var checkbox = $(this);
 										var checked = checkbox.prop('checked');
 										var dMsg = (checked) ? 'You want to activate the product ?'
 												: 'You want to deactivate the product ?';
 										var value = checkbox.prop('value');
-										bootbox
-												.confirm({
-													size : 'medim',
+										bootbox.confirm({
+													size : 'medium',
 													title : 'Product Activation & DeActivation',
 													message : dMsg,
 													callback : function(confirmed) {
+														console.log(confirmed);
 														if (confirmed) {
-															
 															console.log(value);
-															var activationUrl= window.contextRoot +'/manage/product/'+ value +'/activation';
-															
+															var activationUrl= window.contextRoot +'/manage/product/'+ value +'/activation'
+															//bootbox.alert("trying to post on url /manage/product/id/activation");
 															$.post(activationUrl,function(data){
-																bootbox
-																.alert({
+																bootbox.alert({
 																	size : 'medium',
 																	title : 'Information',
 																	message : data
 
-																});																		
-															});
+																});		//end of alert																
+															}); //end of post
 															
 															
 														} else {
@@ -313,5 +331,82 @@ $(function() {
 		
 	}
 
+// validation code for Login
+	
+	var $loginForm = $('#loginForm');
+	
+	if($loginForm.length) {
+		
+		$loginForm.validate({
+			
+			rules : {
+				
+				username : {
+					
+					required: true,
+					email: true
+					
+				},
+				
+				password: {
+					required: true
+				}
+				
+			},
+			
+			messages : {
+				
+				username : {
+					
+					required: 'Please enter the user name!',
+					email: 'Please enter a valid email!'
+					
+				},
+				
+				password: {
+					
+					required: 'Please enter the password'
+				}
+				
+				
+			},
+			errorElement: 'em',
+			errorPlacement: function(error, element) {
+				// add the class of help-block
+				error.addClass('help-block');
+				// add the error element after the input element
+				error.insertAfter(element);				
+			}
+		});
+		
+		
+	}
+	
+	//--------
+	/*------*/
+	/* handle refresh cart*/	
+	$('button[name="refreshCart"]').click(function(){
+		var cartLineId = $(this).attr('value');
+		var countField = $('#count_' + cartLineId);
+		var originalCount = countField.attr('value');
+		// do the checking only the count has changed
+		if(countField.val() !== originalCount) {	
+			// check if the quantity is within the specified range
+			if(countField.val() < 1 || countField.val() > 3) {
+				// set the field back to the original field
+				countField.val(originalCount);
+				bootbox.alert({
+					size: 'medium',
+			    	title: 'Error',
+			    	message: 'Product Count should be minimum 1 and maximum 3!'
+				});
+			}
+			else {
+				// use the window.location.href property to send the request to the server
+				var updateUrl = window.contextRoot + '/cart/' + cartLineId + '/update?count=' + countField.val();
+				window.location.href = updateUrl;
+			}
+		}
+	});
 
 });
